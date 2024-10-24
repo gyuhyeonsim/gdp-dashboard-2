@@ -99,6 +99,20 @@ if not sentiment_1_count.empty:
 else:
     st.warning("선택한 간격에 해당하는 데이터가 없습니다.")
 
+# 전체 기간 동안 카테고리별 리뷰 개수를 파이차트로 표시
+category_counts = df['category'].value_counts().reset_index()
+category_counts.columns = ['category', 'count']
+
+category_pie_chart = alt.Chart(category_counts).mark_arc().encode(
+    theta=alt.Theta(field='count', type='quantitative'),
+    color=alt.Color(field='category', type='nominal'),
+    tooltip=['category', 'count']
+).properties(
+    title='전체 기간 동안 카테고리별 리뷰 개수'
+)
+
+st.altair_chart(category_pie_chart, use_container_width=True)
+
 # 카테고리 선택란 추가
 selected_categories = st.multiselect('카테고리 선택', options=list(category_mapping.values()) + ['기타'], default=list(category_mapping.values()))
 filtered_df = df[df['category'].isin(selected_categories)]
